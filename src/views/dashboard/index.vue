@@ -166,7 +166,7 @@ const radio3 = ref("静态代码分析");
 </template>
 
 <style scoped lang="scss">
-.dashboard >>> .el-card {
+.dashboard :deep(.el-card) {
   margin-bottom: 8px;
 }
 

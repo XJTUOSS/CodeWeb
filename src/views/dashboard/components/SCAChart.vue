@@ -19,7 +19,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import * as echarts from "echarts";
-import { ElRow, ElCol, ElContainer, ElHeader, ElMain } from "element-plus";
+import { ElRow, ElCol, ElContainer, ElMain } from "element-plus";
 
 const pieChart1 = ref(null);
 const pieChart2 = ref(null);
