@@ -11,6 +11,12 @@ import {
   type UploadRawFile
 } from "element-plus";
 import { ArrowDown } from "@element-plus/icons-vue";
+import project from "@/router/modules/project";
+import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
+
+defineOptions({
+  name: "ProjectManagement"
+});
 
 const uploadVisible = ref(false);
 const importVisible = ref(false);
@@ -44,6 +50,7 @@ const projectStats = ref({
 });
 
 interface Project {
+  uuid: string;
   name: string;
   status: string;
   riskLevel: string;
@@ -54,6 +61,40 @@ interface Project {
   scanTime: string;
   projectSource: string;
 }
+
+const toProject = data => {
+  var projectSrc = "";
+  switch (data.projectType) {
+    case "upload":
+      projectSrc = "本地上传";
+      break;
+    case "github":
+      projectSrc = "Github";
+      break;
+    case "gitlab":
+      projectSrc = "Gitlab";
+      break;
+    case "gitee":
+      projectSrc = "Gitee";
+      break;
+    case "bitbucket":
+      projectSrc = "BitBucket";
+      break;
+  }
+  return {
+    uuid: data.projectUUID,
+    name: data.projectName,
+    status: data.lastScanStatus,
+    riskLevel: null,
+    lastUpdate: data.lastUpdateTime,
+    lastScan: data.lastScanTime,
+    riskDistribution: null,
+    scanType: null,
+    scanTime: null,
+    // TODO: 项目地址和来源
+    projectSource: projectSrc
+  };
+};
 
 interface UploadForm {
   userUUID: string;
@@ -99,6 +140,7 @@ const uploadFile = ref<UploadInstance>();
 const changeFile = (upload: UploadFile) => {
   file.value = upload;
 };
+const loading = ref(false);
 
 const handleExceed: UploadProps["onExceed"] = files => {
   uploadFile.value!.clearFiles();
@@ -112,27 +154,13 @@ const uploadFormRef = ref<FormInstance>();
 
 const repoVis = ref("public"); // public or private
 
-const _projects = ref([
-  {
-    name: "TestProject",
-    status: "已更新",
-    riskLevel: "严重",
-    lastScan: "2024-7-12",
-    riskDistribution: "高-2-中-1-低-3",
-    scanType: "软件成分分析",
-    scanTime: "20s",
-    projectLink: "github.com/a/b",
-    projectSource: "Github"
-  }
-]);
-
 const projects = ref<Project[]>([]);
 
 const getProjectList = async params => {
   var query = new URLSearchParams(params).toString();
   var ret = [];
   await http
-    .request<any[]>("get", "/project/api/project/v1/getprojlist?" + query)
+    .request<any[]>("get", "/api/project/v1/getprojlist?" + query)
     .then(resSets => {
       // projects.value = res;
       for (let i = 0; i < resSets.length; i++) {
@@ -142,7 +170,23 @@ const getProjectList = async params => {
   return ret;
 };
 
+const filterText = ref("");
+
+const filterProjects = async () => {
+  loading.value = true;
+  projects.value = [];
+  var res = await getProjectList({
+    userUUID: "5",
+    projectName: filterText.value
+  });
+  for (let i = 0; i < res.length; i++) {
+    projects.value.push(toProject(res[i]));
+  }
+  loading.value = false;
+};
+
 const fetchProjects = async () => {
+  loading.value = true;
   projects.value = [];
   var res = await getProjectList({ userUUID: "5" });
   var unScanned = 0;
@@ -153,41 +197,13 @@ const fetchProjects = async () => {
     if (res[i].lastScanStatus == null) unScanned++;
     else if (res[i].lastScanStatus == "outdated") outdatedScans++;
     else if (res[i].lastScanStatus == "scanned") scanned++;
-    var projectSrc = "";
-    switch (res[i].projectType) {
-      case "upload":
-        projectSrc = "本地上传";
-        break;
-      case "github":
-        projectSrc = "Github";
-        break;
-      case "gitlab":
-        projectSrc = "Gitlab";
-        break;
-      case "gitee":
-        projectSrc = "Gitee";
-        break;
-      case "bitbucket":
-        projectSrc = "BitBucket";
-        break;
-    }
-    projects.value.push({
-      name: res[i].projectName,
-      status: res[i].lastScanStatus,
-      riskLevel: null,
-      lastUpdate: res[i].lastUpdateTime,
-      lastScan: res[i].lastScanTime,
-      riskDistribution: null,
-      scanType: null,
-      scanTime: null,
-      // TODO: 项目地址和来源
-      projectSource: projectSrc
-    });
+    projects.value.push(toProject(res[i]));
   }
   projectStats.value.totalProjects = res.length;
   projectStats.value.unscanned = unScanned;
   projectStats.value.outdatedScans = outdatedScans;
   projectStats.value.scanned = scanned;
+  loading.value = false;
 };
 
 const handleSubmitUpload = async (formRef: FormInstance | undefined) => {
@@ -203,7 +219,7 @@ const handleSubmitUpload = async (formRef: FormInstance | undefined) => {
       formData.append("file", file.value.raw);
       formData.append("uploadProjectRequest", blob);
       http
-        .request("post", "project/api/project/v1/new/upload", {
+        .request("post", "/api/project/v1/new/upload", {
           headers: {
             "Content-Type": "multipart/form-data; charset=utf-8"
           },
@@ -228,7 +244,7 @@ const handleSubmitImport = async (formRef: FormInstance | undefined) => {
       // TODO: 获取userUUID
       importForm.value.userUUID = "5";
       http
-        .request("post", "project/api/project/v1/new/import", {
+        .request("post", "/api/project/v1/new/import", {
           data: importForm.value
         })
         .then(res => {
@@ -272,7 +288,7 @@ onMounted(async () => {
 const router = useRouter();
 
 const navigateToDetails = () => {
-  router.push({ path: "/project/detail" });
+  router.push({ name: "TestDetail" });
 };
 </script>
 <template>
@@ -304,11 +320,16 @@ const navigateToDetails = () => {
       >
     </div>
     <!-- TODO: 项目筛选功能 -->
-    <!-- <div class="filter-container">
-      <input type="text" placeholder="选择搜索类型(ID或name或者tags)" />
-      <input type="text" placeholder="根据搜索类型搜索" />
-    </div> -->
-    <table class="project-table">
+    <div class="filter-container">
+      <input
+        v-model="filterText"
+        type="text"
+        placeholder="请输入项目名称进行筛选"
+        clearable
+        @change="filterProjects"
+      />
+    </div>
+    <!-- <table class="project-table">
       <thead>
         <tr>
           <th>项目名称</th>
@@ -347,7 +368,41 @@ const navigateToDetails = () => {
           <td><button class="scan-btn">扫描</button></td>
         </tr>
       </tbody>
-    </table>
+    </table> -->
+    <el-table v-loading="loading" :data="projects" class="project-table">
+      <el-table-column prop="name" label="项目名称">
+        <template v-slot="scope">
+          <a href="#" @click.prevent="navigateToDetails()">
+            {{ scope.row.name }}
+          </a>
+        </template>
+      </el-table-column>
+      <el-table-column prop="status" label="状态" />
+      <el-table-column prop="riskLevel" label="风险等级" />
+      <el-table-column prop="lastUpdate" label="最近一次更新时间">
+        <template v-slot="scope">
+          {{
+            scope.row.lastUpdate == null
+              ? null
+              : formatDate(scope.row.lastUpdate)
+          }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="lastScan" label="最近一次扫描时间">
+        <template v-slot="scope">
+          {{
+            scope.row.lastScan == null ? null : formatDate(scope.row.lastScan)
+          }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="riskDistribution" label="风险分布" />
+      <el-table-column prop="scanType" label="扫描类别" />
+      <el-table-column prop="scanTime" label="扫描耗费时间" />
+      <el-table-column prop="projectSource" label="项目来源" />
+      <el-table-column fixed="right" label="扫描">
+        <el-button class="scan-btn">扫描</el-button>
+      </el-table-column>
+    </el-table>
 
     <div class="dialog-container">
       <el-dialog
@@ -526,8 +581,10 @@ const navigateToDetails = () => {
 }
 
 .project-table {
+  white-space: nowrap;
+  overflow: hidden;
   width: 100%;
-  border-collapse: collapse;
+  //border-collapse: collapse;
 }
 
 .project-table th,

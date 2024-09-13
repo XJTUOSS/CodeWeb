@@ -1,56 +1,8 @@
-<!-- src/components/ProjectDetails.vue -->
-<template>
-  <!-- <div class="project-details-container">
-    <el-card>
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <h2>{{ projectName }}</h2>
-          <p>创建人: {{ creator }}</p>
-          <p>创建时间: {{ createTime }}</p>
-        </el-col>
-        <el-col :span="12" class="text-right">
-          <el-button type="primary">扫描</el-button>
-          <el-button>设置</el-button>
-        </el-col>
-      </el-row>
-    </el-card>
-    <el-tabs v-model="activeTab">
-      <el-tab-pane label="软件依赖成分分析" name="1">
-        <el-row :gutter="20">
-          <el-col :span="8">
-            <div ref="componentsChart" class="chart-container" />
-          </el-col>
-          <el-col :span="8">
-            <div ref="securityChart" class="chart-container" />
-          </el-col>
-          <el-col :span="8">
-            <div ref="licensedChart" class="chart-container" />
-          </el-col>
-        </el-row>
-        <el-table :data="components" stripe>
-          <el-table-column prop="name" label="组件" />
-          <el-table-column prop="platform" label="管理平台" />
-          <el-table-column prop="currentVersion" label="当前版本" />
-          <el-table-column prop="latestVersion" label="最新版本" />
-          <el-table-column prop="highRisk" label="高危" />
-          <el-table-column prop="mediumRisk" label="中危" />
-          <el-table-column prop="lowRisk" label="低危" />
-        </el-table>
-      </el-tab-pane>
-      <el-tab-pane label="Fuzzing扫描" name="2" />
-    </el-tabs>
-  </div> -->
-  <div>aaa</div>
-</template>
-
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 // import * as echarts from "echarts";
 import { useRouter } from "vue-router";
-
-defineOptions({
-  name: "ProjectDetail"
-});
+defineOptions({ name: "TestDetail" });
 
 // interface ComponentInfo {
 //   name: string;
@@ -306,6 +258,50 @@ defineOptions({
 //   // licensedVersionsChartInstance.setOption(licensedVersionsOption);
 // });
 </script>
+
+<template>
+  <!-- <div class="project-details-container">
+    <el-card>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <h2>{{ projectName }}</h2>
+          <p>创建人: {{ creator }}</p>
+          <p>创建时间: {{ createTime }}</p>
+        </el-col>
+        <el-col :span="12" class="text-right">
+          <el-button type="primary">扫描</el-button>
+          <el-button>设置</el-button>
+        </el-col>
+      </el-row>
+    </el-card>
+    <el-tabs v-model="activeTab">
+      <el-tab-pane label="软件依赖成分分析" name="1">
+        <el-row :gutter="20">
+          <el-col :span="8">
+            <div ref="componentsChart" class="chart-container" />
+          </el-col>
+          <el-col :span="8">
+            <div ref="securityChart" class="chart-container" />
+          </el-col>
+          <el-col :span="8">
+            <div ref="licensedChart" class="chart-container" />
+          </el-col>
+        </el-row>
+        <el-table :data="components" stripe>
+          <el-table-column prop="name" label="组件" />
+          <el-table-column prop="platform" label="管理平台" />
+          <el-table-column prop="currentVersion" label="当前版本" />
+          <el-table-column prop="latestVersion" label="最新版本" />
+          <el-table-column prop="highRisk" label="高危" />
+          <el-table-column prop="mediumRisk" label="中危" />
+          <el-table-column prop="lowRisk" label="低危" />
+        </el-table>
+      </el-tab-pane>
+      <el-tab-pane label="Fuzzing扫描" name="2" />
+    </el-tabs>
+  </div> -->
+  <h1>Test Detail</h1>
+</template>
 
 <style scoped lang="scss">
 .project-details-container {

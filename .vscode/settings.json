@@ -36,7 +36,6 @@
     "v-copy",
     "v-longpress",
     "v-optimize",
-    "v-perms",
     "v-ripple"
   ],
   "vscodeCustomCodeColor.highlightValueColor": "#b392f0",

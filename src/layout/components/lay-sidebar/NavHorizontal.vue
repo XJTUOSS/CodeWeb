@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { emitter } from "@/utils/mitt";
+import { isAllEmpty } from "@pureadmin/utils";
+import { ref, nextTick, computed } from "vue";
 import { useNav } from "@/layout/hooks/useNav";
 import LaySearch from "../lay-search/index.vue";
 import LayNotice from "../lay-notice/index.vue";
-import { responsiveStorageNameSpace } from "@/config";
-import { ref, nextTick, computed, onMounted } from "vue";
-import { storageLocal, isAllEmpty } from "@pureadmin/utils";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 import LaySidebarItem from "../lay-sidebar/components/SidebarItem.vue";
 import LaySidebarFullScreen from "../lay-sidebar/components/SidebarFullScreen.vue";
@@ -14,11 +12,6 @@ import LogoutCircleRLine from "@iconify-icons/ri/logout-circle-r-line";
 import Setting from "@iconify-icons/ri/settings-3-line";
 
 const menuRef = ref();
-const showLogo = ref(
-  storageLocal().getItem<StorageConfigs>(
-    `${responsiveStorageNameSpace()}configure`
-  )?.showLogo ?? true
-);
 
 const {
   route,
@@ -39,12 +32,6 @@ const defaultActive = computed(() =>
 nextTick(() => {
   menuRef.value?.handleResize();
 });
-
-onMounted(() => {
-  emitter.on("logoChange", key => {
-    showLogo.value = key;
-  });
-});
 </script>
 
 <template>
@@ -52,7 +39,7 @@ onMounted(() => {
     v-loading="usePermissionStoreHook().wholeMenus.length === 0"
     class="horizontal-header"
   >
-    <div v-if="showLogo" class="horizontal-header-left" @click="backTopMenu">
+    <div class="horizontal-header-left" @click="backTopMenu">
       <img :src="getLogo()" alt="logo" />
       <span>{{ title }}</span>
     </div>
