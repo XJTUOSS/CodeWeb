@@ -9,13 +9,22 @@ import {
   Tooltip,
   Legend
 } from "chart.js";
-import VulnerabilityCard from "@/views/dashboard/components/VulnerabilityCard.vue";
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+import VulnerabilityCard from "@/views/dashboard/components/VulnerabilityCard.vue";
+//引入图标
+import projectIcon from "@/assets/svg/dashboard/project_icon.svg?component";
+import codeRepoIcon from "@/assets/svg/dashboard/code_repo_icon.svg?component";
+import scanIcon from "@/assets/svg/dashboard/scan_icon.svg?component";
+import fileNumIcon from "@/assets/svg/dashboard/file_num_icon.svg?component";
+//引入两个子图表组件
+import StaticCodeAnalysisChart from "@/views/dashboard/components/StaticCodeAnalysisChart.vue";
+import FuzzChart from "@/views/dashboard/components/FuzzChart.vue";
+import SCAChart from "@/views/dashboard/components/SCAChart.vue";
 
 const projectInfo = ref({
   projects: 32,
   repositories: 60,
-  scanTimes: 10,
+  scanTimes: 9,
   scanFiles: 62655
 });
 const recentScansData = ref({
@@ -70,7 +79,7 @@ const appRankingData = ref({
     }
   ]
 });
-const radio3 = ref("静态代码分析");
+const radio3 = ref("sast");
 </script>
 <template>
   <div class="dashboard">
@@ -80,6 +89,7 @@ const radio3 = ref("静态代码分析");
           <div class="card-title">应用信息</div>
           <div class="app-info">
             <div class="app-card">
+              <projectIcon class="card-icon" />
               <div class="right-info">
                 <div class="proj">项目数量(个)</div>
                 <div
@@ -91,6 +101,7 @@ const radio3 = ref("静态代码分析");
               </div>
             </div>
             <div class="app-card">
+              <codeRepoIcon class="card-icon" />
               <div class="right-info">
                 <div class="repo">仓库数量(个)</div>
                 <div
@@ -102,6 +113,7 @@ const radio3 = ref("静态代码分析");
               </div>
             </div>
             <div class="app-card">
+              <scanIcon class="card-icon" />
               <div class="right-info">
                 <div class="scan">扫描次数(次)</div>
                 <div
@@ -113,6 +125,7 @@ const radio3 = ref("静态代码分析");
               </div>
             </div>
             <div class="app-card">
+              <fileNumIcon class="card-icon" />
               <div class="right-info">
                 <div class="file">扫描文件数量(个)</div>
                 <div
@@ -141,16 +154,19 @@ const radio3 = ref("静态代码分析");
     </el-row>
     <div style="margin: 6px 0 2px">
       <el-radio-group v-model="radio3" size="small">
-        <el-radio-button label="静态代码分析" />
-        <el-radio-button label="架构一致性" />
-        <el-radio-button label="软件物料" />
+        <el-radio-button value="sast" label="静态代码分析" />
+        <el-radio-button value="sca" label="软件成分分析" />
+        <el-radio-button value="fuzz" label="Fuzz扫描" />
       </el-radio-group>
     </div>
+    <static-code-analysis-chart v-if="radio3 == 'sast'" />
+    <SCAChart v-if="radio3 == 'sca'" />
+    <fuzz-chart v-if="radio3 == 'fuzz'" />
   </div>
 </template>
 
 <style scoped lang="scss">
-.dashboard >>> .el-card {
+.dashboard :deep(.el-card) {
   margin-bottom: 8px;
 }
 
@@ -190,5 +206,11 @@ const radio3 = ref("静态代码分析");
 .app-card > .right-info {
   width: 140px;
   font-size: 14px;
+}
+
+.card-icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
 }
 </style>
