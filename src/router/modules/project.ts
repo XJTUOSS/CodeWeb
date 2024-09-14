@@ -11,17 +11,20 @@ export default {
       name: "ProjectManagement",
       component: () => import("@/views/project/ProjectManagement.vue"),
       meta: {
-        title: "项目列表"
+        title: "项目列表",
+        showLink: true
       }
     },
     {
-      path: "/project/detail",
-      name: "TestDetail",
-      component: () => import("@/views/project/TestDetail.vue"),
+      path: "/project/query-detail",
+      name: "ProjectQueryDetail",
+      component: () => import("@/views/project/ProjectDetail.vue"),
       meta: {
         title: "项目详情",
-        showLink: false
+        showLink: false,
+        activePath: "/project/manage",
+        keepAlive: false
       }
     }
   ]
-};
+} satisfies RouteConfigsTable;

@@ -79,7 +79,7 @@ const appRankingData = ref({
     }
   ]
 });
-const radio3 = ref("静态代码分析");
+const radio3 = ref("sast");
 </script>
 <template>
   <div class="dashboard">
@@ -154,14 +154,14 @@ const radio3 = ref("静态代码分析");
     </el-row>
     <div style="margin: 6px 0 2px">
       <el-radio-group v-model="radio3" size="small">
-        <el-radio-button label="静态代码分析" />
-        <el-radio-button label="软件成分分析" />
-        <el-radio-button label="Fuzz扫描" />
+        <el-radio-button value="sast" label="静态代码分析" />
+        <el-radio-button value="sca" label="软件成分分析" />
+        <el-radio-button value="fuzz" label="Fuzz扫描" />
       </el-radio-group>
     </div>
-    <static-code-analysis-chart v-if="radio3 == '静态代码分析'" />
-    <SCAChart v-if="radio3 == '软件成分分析'" />
-    <fuzz-chart v-if="radio3 == 'Fuzz扫描'" />
+    <static-code-analysis-chart v-if="radio3 == 'sast'" />
+    <SCAChart v-if="radio3 == 'sca'" />
+    <fuzz-chart v-if="radio3 == 'fuzz'" />
   </div>
 </template>
 

@@ -1,6 +1,27 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import Card from "@/components/Card/Card.vue";
+import { Line } from "vue-chartjs";
+
+import {
+  Chart as ChartJS,
+  LineElement,
+  PointElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend
+} from "chart.js";
+
+ChartJS.register(
+  LineElement,
+  PointElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend
+);
+
 const chartData = ref({
   labels: [
     "2021-01-01",
@@ -22,7 +43,7 @@ const chartData = ref({
 <template>
   <Card title="Static Code Analysis">
     <div class="chart-container">
-      <el-line-chart
+      <Line
         :data="chartData"
         :x-axis-name="'Date'"
         :y-axis-name="'Issues'"

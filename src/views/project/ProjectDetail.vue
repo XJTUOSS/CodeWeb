@@ -81,187 +81,196 @@ const securityIssuesChart = ref(null);
 const licensedVersionsChart = ref(null);
 
 onMounted(() => {
-  const componentsChartInstance = echarts.init(componentsChart.value);
-  const securityChartInstance = echarts.init(securityChart.value);
-  const licensedChartInstance = echarts.init(licensedChart.value);
-  const componentVersionsChartInstance = echarts.init(
-    componentVersionsChart.value
-  );
-  const securityIssuesChartInstance = echarts.init(securityIssuesChart.value);
-  const licensedVersionsChartInstance = echarts.init(
+  if (
+    componentsChart.value &&
+    securityChart.value &&
+    licensedChart.value &&
+    componentVersionsChart.value &&
+    securityIssuesChart.value &&
     licensedVersionsChart.value
-  );
+  ) {
+    const componentsChartInstance = echarts.init(componentsChart.value);
+    const securityChartInstance = echarts.init(securityChart.value);
+    const licensedChartInstance = echarts.init(licensedChart.value);
+    const componentVersionsChartInstance = echarts.init(
+      componentVersionsChart.value
+    );
+    const securityIssuesChartInstance = echarts.init(securityIssuesChart.value);
+    const licensedVersionsChartInstance = echarts.init(
+      licensedVersionsChart.value
+    );
 
-  const componentsOption = {
-    title: {
-      text: "组件版本分布"
-    },
-    tooltip: {
-      trigger: "item"
-    },
-    legend: {
-      top: "5%",
-      left: "center"
-    },
-    series: [
-      {
-        name: "组件版本数",
-        type: "pie",
-        radius: "50%",
-        data: [
-          { value: 2, name: "不合规" },
-          { value: 21, name: "合规" }
-        ],
-        emphasis: {
+    const componentsOption = {
+      title: {
+        text: "组件版本分布"
+      },
+      tooltip: {
+        trigger: "item"
+      },
+      legend: {
+        top: "5%",
+        left: "center"
+      },
+      series: [
+        {
+          name: "组件版本数",
+          type: "pie",
+          radius: "50%",
+          data: [
+            { value: 2, name: "不合规" },
+            { value: 21, name: "合规" }
+          ],
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: "rgba(0, 0, 0, 0.5)"
+            }
+          }
+        }
+      ]
+    };
+
+    const securityOption = {
+      title: {
+        text: "安全漏洞"
+      },
+      tooltip: {
+        trigger: "item"
+      },
+      legend: {
+        top: "5%",
+        left: "center"
+      },
+      series: [
+        {
+          name: "安全漏洞数",
+          type: "pie",
+          radius: "50%",
+          data: [
+            { value: 3, name: "高" },
+            { value: 1, name: "中" },
+            { value: 2, name: "低" },
+            { value: 1, name: "未知" }
+          ],
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: "rgba(0, 0, 0, 0.5)"
+            }
+          }
+        }
+      ]
+    };
+
+    const licensedOption = {
+      title: {
+        text: "许可证信息"
+      },
+      tooltip: {
+        trigger: "item"
+      },
+      legend: {
+        top: "5%",
+        left: "center"
+      },
+      series: [
+        {
+          name: "许可证数",
+          type: "pie",
+          radius: "50%",
+          data: [
+            { value: 2, name: "不合规" },
+            { value: 15, name: "合规" }
+          ],
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: "rgba(0, 0, 0, 0.5)"
+            }
+          }
+        }
+      ]
+    };
+
+    const componentVersionsOption = {
+      xAxis: {
+        type: "category",
+        data: ["不合规", "合规"]
+      },
+      yAxis: {
+        type: "value"
+      },
+      series: [
+        {
+          data: [2, 21],
+          type: "bar",
+          barWidth: "60%",
           itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: "rgba(0, 0, 0, 0.5)"
+            color: function (params) {
+              var colorList = ["#f56c6c", "#67c23a"];
+              return colorList[params.dataIndex];
+            }
           }
         }
-      }
-    ]
-  };
+      ]
+    };
 
-  const securityOption = {
-    title: {
-      text: "安全漏洞"
-    },
-    tooltip: {
-      trigger: "item"
-    },
-    legend: {
-      top: "5%",
-      left: "center"
-    },
-    series: [
-      {
-        name: "安全漏洞数",
-        type: "pie",
-        radius: "50%",
-        data: [
-          { value: 3, name: "高" },
-          { value: 1, name: "中" },
-          { value: 2, name: "低" },
-          { value: 1, name: "未知" }
-        ],
-        emphasis: {
+    const securityIssuesOption = {
+      xAxis: {
+        type: "category",
+        data: ["高", "中", "低", "未知"]
+      },
+      yAxis: {
+        type: "value"
+      },
+      series: [
+        {
+          data: [3, 1, 2, 1],
+          type: "bar",
+          barWidth: "60%",
           itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: "rgba(0, 0, 0, 0.5)"
+            color: function (params) {
+              var colorList = ["#f56c6c", "#e6a23c", "#f39c12", "#909399"];
+              return colorList[params.dataIndex];
+            }
           }
         }
-      }
-    ]
-  };
+      ]
+    };
 
-  const licensedOption = {
-    title: {
-      text: "许可证信息"
-    },
-    tooltip: {
-      trigger: "item"
-    },
-    legend: {
-      top: "5%",
-      left: "center"
-    },
-    series: [
-      {
-        name: "许可证数",
-        type: "pie",
-        radius: "50%",
-        data: [
-          { value: 2, name: "不合规" },
-          { value: 15, name: "合规" }
-        ],
-        emphasis: {
+    const licensedVersionsOption = {
+      xAxis: {
+        type: "category",
+        data: ["不合规", "合规"]
+      },
+      yAxis: {
+        type: "value"
+      },
+      series: [
+        {
+          data: [2, 15],
+          type: "bar",
+          barWidth: "60%",
           itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: "rgba(0, 0, 0, 0.5)"
+            color: function (params) {
+              var colorList = ["#f56c6c", "#67c23a"];
+              return colorList[params.dataIndex];
+            }
           }
         }
-      }
-    ]
-  };
+      ]
+    };
 
-  const componentVersionsOption = {
-    xAxis: {
-      type: "category",
-      data: ["不合规", "合规"]
-    },
-    yAxis: {
-      type: "value"
-    },
-    series: [
-      {
-        data: [2, 21],
-        type: "bar",
-        barWidth: "60%",
-        itemStyle: {
-          color: function (params) {
-            var colorList = ["#f56c6c", "#67c23a"];
-            return colorList[params.dataIndex];
-          }
-        }
-      }
-    ]
-  };
-
-  const securityIssuesOption = {
-    xAxis: {
-      type: "category",
-      data: ["高", "中", "低", "未知"]
-    },
-    yAxis: {
-      type: "value"
-    },
-    series: [
-      {
-        data: [3, 1, 2, 1],
-        type: "bar",
-        barWidth: "60%",
-        itemStyle: {
-          color: function (params) {
-            var colorList = ["#f56c6c", "#e6a23c", "#f39c12", "#909399"];
-            return colorList[params.dataIndex];
-          }
-        }
-      }
-    ]
-  };
-
-  const licensedVersionsOption = {
-    xAxis: {
-      type: "category",
-      data: ["不合规", "合规"]
-    },
-    yAxis: {
-      type: "value"
-    },
-    series: [
-      {
-        data: [2, 15],
-        type: "bar",
-        barWidth: "60%",
-        itemStyle: {
-          color: function (params) {
-            var colorList = ["#f56c6c", "#67c23a"];
-            return colorList[params.dataIndex];
-          }
-        }
-      }
-    ]
-  };
-
-  componentsChartInstance.setOption(componentsOption);
-  securityChartInstance.setOption(securityOption);
-  licensedChartInstance.setOption(licensedOption);
-  componentVersionsChartInstance.setOption(componentVersionsOption);
-  securityIssuesChartInstance.setOption(securityIssuesOption);
-  licensedVersionsChartInstance.setOption(licensedVersionsOption);
+    componentsChartInstance.setOption(componentsOption);
+    securityChartInstance.setOption(securityOption);
+    licensedChartInstance.setOption(licensedOption);
+    componentVersionsChartInstance.setOption(componentVersionsOption);
+    securityIssuesChartInstance.setOption(securityIssuesOption);
+    licensedVersionsChartInstance.setOption(licensedVersionsOption);
+  }
 });
 </script>
 
