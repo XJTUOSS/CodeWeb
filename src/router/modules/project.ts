@@ -8,7 +8,6 @@ export default {
     showLink: true,
     rank: 1
   },
-  component: () => import("@/layout/index.vue"),
   children: [
     {
       path: "/project/manage",
@@ -16,17 +15,19 @@ export default {
       component: () => import("@/views/project/ProjectManagement.vue"),
       meta: {
         title: "项目列表",
-        showLink: true
+        keepAlive: true
       }
     },
     {
       path: "/project/detail",
-      name: "ProjectDetail",
-      component: () => import("@/views/project/ProjectDetail.vue"),
+      name: "ProjectQueryDetail",
+      component: () => import("@/views/project/query-detail.vue"),
       meta: {
         title: "项目详情",
-        showLink: false
+        showLink: false,
+        activePath: "/project/manage",
+        keepAlive: false
       }
     }
   ]
-};
+} satisfies RouteConfigsTable;

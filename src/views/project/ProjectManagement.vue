@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useDetail } from "./hooks";
 
+const { fetchDetail, router } = useDetail();
 const getStatLabel = (key: string): string => {
   const labels: { [key: string]: string } = {
     totalProjects: "项目总数",
@@ -34,12 +35,6 @@ const projects = ref([
     projectSource: "Github"
   }
 ]);
-
-const router = useRouter();
-
-const navigateToDetails = () => {
-  router.push({ path: "/project/detail" });
-};
 </script>
 <template>
   <div class="project-management">
@@ -74,9 +69,11 @@ const navigateToDetails = () => {
       <tbody>
         <tr v-for="project in projects" :key="project.name">
           <td>
-            <a href="#" @click.prevent="navigateToDetails">
+            <el-button
+              @click="fetchDetail({ id: 1, name: project.name }, 'query')"
+            >
               {{ project.name }}
-            </a>
+            </el-button>
           </td>
           <td>{{ project.status }}</td>
           <td>{{ project.riskLevel }}</td>
